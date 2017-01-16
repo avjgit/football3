@@ -4,6 +4,16 @@
     ViewData["Title"] = "Index";
 }
 
+<h3>Upload JSON file with football statistics</h3>
+<form method="post" asp-action="Upload" asp-controller="Games" enctype="multipart/form-data">
+    <input type="file" name="files" multiple />
+    <input type="submit" value="Upload" />
+</form>
+
+<p>
+    <a asp-action="DeleteAll" asp-controller="Games">Delete all</a>
+</p>
+
 <h2>Index</h2>
 
 <p>
