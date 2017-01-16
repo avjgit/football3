@@ -9,7 +9,7 @@ namespace footballnet.Models
         public int Id { get; set; }
 
         [JsonProperty("Spele")]
-        public Game Spele { get; set; }
+        public Game Game { get; set; }
     }
 
     public class Game

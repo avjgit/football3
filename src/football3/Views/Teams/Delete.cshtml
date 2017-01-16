@@ -1,0 +1,112 @@
+@model footballnet.Models.Team
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Team</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.AverageTimePlayed)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AverageTimePlayed)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Defendors)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Defendors)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Forwards)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Forwards)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Goalkeepers)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Goalkeepers)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.GoalsLost)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GoalsLost)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.GoalsWon)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GoalsWon)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LossesDuringAddedTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LossesDuringAddedTime)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LossesDuringMainTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LossesDuringMainTime)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PenaltyGoals)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PenaltyGoals)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Place)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Place)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Points)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Points)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalTimePlayed)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TotalTimePlayed)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.WinsDuringAddedTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.WinsDuringAddedTime)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.WinsDuringMainTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.WinsDuringMainTime)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            <a asp-action="Index">Back to List</a>
+        </div>
+    </form>
+</div>

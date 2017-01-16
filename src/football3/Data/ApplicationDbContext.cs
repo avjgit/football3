@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using football3.Models;
+using footballnet.Models;
 
 namespace football3.Data
 {
@@ -22,5 +23,13 @@ namespace football3.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
+
+        public DbSet<Referee> Referee { get; set; }
+
+        public DbSet<Player> Player { get; set; }
+
+        public DbSet<Team> Team { get; set; }
+
+        public DbSet<Game> Game { get; set; }
     }
 }
