@@ -7,7 +7,7 @@ namespace football3.Utils
 {
     public class Parser
     {
-        public static TimeSpan GetTime(string timeRecord)
+        public TimeSpan GetTime(string timeRecord)
         {
             var time = timeRecord.Split(':');
             int hours = 0;
