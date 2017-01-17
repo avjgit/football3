@@ -30,18 +30,14 @@ namespace football3.Controllers
                 player.Goals = teamGoals.Count(b => b.PlayerNr == player.Number);
                 player.Passes = teamGoals.SelectMany(f => f.Passers).Count(p => p.Nr == player.Number);
 
-                player.GamesPlayedInMainTeam = _context.Game
-                    .Count(game => game.Teams.Where(t => t.Title == player.Team)
-                                   .SelectMany(t => t.MainPlayersRecord.PlayersNrs)
-                                   .Any(n => n.Nr == player.Number));
+                player.GamesPlayedInMainTeam = teamGames
+                    .SelectMany(t => t.MainPlayersRecord.PlayersNrs)
+                    .Count(n => n.Nr == player.Number);
 
-                player.GamesPlayed = _context.Game
-                    .Count(game => game.Teams.Where(t => t.Title == player.Team)
-                                   .SelectMany(t => t.MainPlayersRecord.PlayersNrs)
-                                   .Any(n => n.Nr == player.Number) ||
-                                   game.Teams.Where(t => t.Title == player.Team)
-                                   .SelectMany(t => t.ChangeRecord.Changes)
-                                   .Any(n => n.PlayerIn == player.Number));
+                player.GamesPlayed = teamGames.Count(team => 
+                    team.MainPlayersRecord.PlayersNrs.Any(n => n.Nr == player.Number) ||
+                    team.ChangeRecord.Changes.Any(n => n.PlayerIn == player.Number)
+                );
 
                 var teamGamesPenalties = teamGames.Select(t => t.PenaltiesRecord).Where(p => p != null);
                 player.YellowCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 1);
