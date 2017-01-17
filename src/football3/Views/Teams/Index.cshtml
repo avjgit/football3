@@ -4,31 +4,23 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.AverageTimePlayed)
+                @Html.DisplayNameFor(model => model.Place)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Defendors)
+                @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Forwards)
+                @Html.DisplayNameFor(model => model.Points)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Goalkeepers)
+                @Html.DisplayNameFor(model => model.WinsDuringMainTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.GoalsLost)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GoalsWon)
+                @Html.DisplayNameFor(model => model.WinsDuringAddedTime)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.LossesDuringAddedTime)
@@ -37,25 +29,22 @@
                 @Html.DisplayNameFor(model => model.LossesDuringMainTime)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.GoalsWon)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.PenaltyGoals)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Place)
+                @Html.DisplayNameFor(model => model.GoalsLost)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Points)
+                @Html.DisplayNameFor(model => model.Forwards)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.Defendors)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TotalTimePlayed)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.WinsDuringAddedTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.WinsDuringMainTime)
+                @Html.DisplayNameFor(model => model.Goalkeepers)
             </th>
         </tr>
     </thead>
@@ -63,22 +52,19 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.AverageTimePlayed)
+                @Html.DisplayFor(modelItem => item.Place)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Defendors)
+                @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Forwards)
+                @Html.DisplayFor(modelItem => item.Points)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Goalkeepers)
+                @Html.DisplayFor(modelItem => item.WinsDuringMainTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.GoalsLost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GoalsWon)
+                @Html.DisplayFor(modelItem => item.WinsDuringAddedTime)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LossesDuringAddedTime)
@@ -87,25 +73,22 @@
                 @Html.DisplayFor(modelItem => item.LossesDuringMainTime)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.GoalsWon)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.PenaltyGoals)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Place)
+                @Html.DisplayFor(modelItem => item.GoalsLost)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Points)
+                @Html.DisplayFor(modelItem => item.Forwards)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(modelItem => item.Defendors)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TotalTimePlayed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WinsDuringAddedTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WinsDuringMainTime)
+                @Html.DisplayFor(modelItem => item.Goalkeepers)
             </td>
         </tr>
 }
