@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using football3.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Runtime.Serialization;
 
 namespace footballnet.Models
@@ -27,16 +26,8 @@ namespace footballnet.Models
         public int Nr { get; set; }
     }
 
-    public class Player
+    public class Player : Person
     {
-        public int Id { get; set; }
-
-        [JsonProperty("Vards")]
-        public string Firstname { get; set; }
-
-        [JsonProperty("Uzvards")]
-        public string Lastname { get; set; }
-
         [JsonProperty("Nr")]
         public int Number { get; set; }
 
@@ -57,6 +48,8 @@ namespace footballnet.Models
 
         [DisplayFormat(DataFormatString = "{0:0.0}")]
         public float AvgGoalsMissed { get; set; }
+
+        public string NameAndTeam => $"{FullName}, {Team}";
     }
 
     public class PlayerRecord
