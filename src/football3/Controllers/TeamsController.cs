@@ -73,10 +73,16 @@ namespace football3.Controllers
                             + team.LossesDuringAddedTime * lossDuringAddedTimePoints
                             + team.LossesDuringMainTime * lossDuringMainTimePoints;
 
-                //var players = _context.Player.Where(u => u.Team == team.Title);
-                //team.Defendors = players.Count(d => d.Role == PlayerRole.Defender);
-                //team.Forwards = players.Count(d => d.Role == PlayerRole.Forward);
-                //team.Goalkeepers = players.Count(d => d.Role == PlayerRole.Goalkeeper);
+                var players = _context
+                    .Player
+                    .Where(p => p.Team == team.Title)
+                    .GroupBy(p => new { p.Firstname, p.Lastname, p.Team })
+                    .Select(p => p.First())
+                    .ToList();
+
+                team.Defendors = players.Count(d => d.Role == PlayerRole.Defender);
+                team.Forwards = players.Count(d => d.Role == PlayerRole.Forward);
+                team.Goalkeepers = players.Count(d => d.Role == PlayerRole.Goalkeeper);
 
                 ////public TimeSpan TotalTimePlayed { get; set; }
                 ////public TimeSpan AverageTimePlayed { get; set; }
