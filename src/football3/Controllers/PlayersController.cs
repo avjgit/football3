@@ -65,12 +65,10 @@ namespace football3.Controllers
                 //public int MinutesPlayed { get; set; }
             }
 
-            //return View(await _context
-            //    .Player
-            //    .OrderByDescending(p => p.Goals)
-            //    .ThenByDescending(z => z.Passes).ToListAsync());
-
-            return View(players);
+            return View(players
+                    .OrderByDescending(p => p.Goals)
+                    .ThenByDescending(z => z.Passes)
+            );
         }
     }
 }
