@@ -62,15 +62,6 @@ namespace football3.Controllers
                 player.YellowCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 1);
                 player.RedCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 2);
 
-                //foreach (var penaltyRecord in teamGamesPenalties)
-                //{
-                //    penaltyRecord.Penalties = _context.Penalty.Where(p => p.)
-                //}
-                //var penaltiesRecord = _context.Game.SelectMany(g => g.Teams.Where(t => t.Title == player.Team))
-                //    .Select(t => t.PenaltiesRecord)
-                //    .Where(p => p != null);
-                //player.YellowCards = penaltiesRecord.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 1);
-                //player.RedCards = penaltiesRecord.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 2);
                 //public int MinutesPlayed { get; set; }
             }
 
