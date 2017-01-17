@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using football3.Data;
-using footballnet.Models;
 
 namespace football3.Controllers
 {
@@ -19,7 +13,6 @@ namespace football3.Controllers
             _context = context;    
         }
 
-        // GET: Referees
         public IActionResult Index()
         {
             var referees = _context.Referee
@@ -29,8 +22,6 @@ namespace football3.Controllers
 
             foreach (var referee in referees)
             {
-                // assuming penalties issued is counted for all referees
-
                  var gamesAsMainOrLineReferee = _context.Game.Where(g => 
                         g.MainReferee.FullName == referee.FullName ||
                         g.LineReferees.Any(l => l.FullName == referee.FullName));
@@ -40,6 +31,7 @@ namespace football3.Controllers
                 if (referee.Games == 0)
                     continue;
 
+                // assuming penalties issued is counted for all referees
                 referee.Penalties = gamesAsMainOrLineReferee
                     .SelectMany(x => x.Teams)
                     .SelectMany(y => y.PenaltiesRecord.Penalties)
