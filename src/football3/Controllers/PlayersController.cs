@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using football3.Data;
 using footballnet.Models;
 
@@ -29,20 +24,11 @@ namespace football3.Controllers
 
             foreach (var player in players)
             {
-                player.Goals = _context
-                    .Game
-                    .SelectMany(g => g.Teams.Where(t => t.Title == player.Team))
-                    .SelectMany(a => a.GoalsRecord.Goals)
-                    .Count(b => b.PlayerNr == player.Number);
+                var teamGames = _context.Team.Where(t => t.Title == player.Team);
+                var teamGoals = teamGames.SelectMany(a => a.GoalsRecord.Goals);
 
-                player.Passes = _context
-                    .Game
-                    .SelectMany(c => c.Teams.Where(d => d.Title == player.Team))
-                    .SelectMany(e => e.GoalsRecord.Goals)
-                    .SelectMany(f => f.Passers)
-                    .Count(p => p.Nr == player.Number);
-
-
+                player.Goals = teamGoals.Count(b => b.PlayerNr == player.Number);
+                player.Passes = teamGoals.SelectMany(f => f.Passers).Count(p => p.Nr == player.Number);
 
                 player.GamesPlayedInMainTeam = _context.Game
                     .Count(game => game.Teams.Where(t => t.Title == player.Team)
@@ -57,7 +43,6 @@ namespace football3.Controllers
                                    .SelectMany(t => t.ChangeRecord.Changes)
                                    .Any(n => n.PlayerIn == player.Number));
 
-                var teamGames = _context.Team.Where(t => t.Title == player.Team);
                 var teamGamesPenalties = teamGames.Select(t => t.PenaltiesRecord).Where(p => p != null);
                 player.YellowCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 1);
                 player.RedCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 2);

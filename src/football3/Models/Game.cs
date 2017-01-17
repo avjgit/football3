@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace footballnet.Models
 {
@@ -33,5 +34,8 @@ namespace footballnet.Models
 
         [JsonProperty("Komanda")]
         public List<Team> Teams { get; set; }
+
+        //public IEnumerable<Goal> GoalsOfTeam(string teamTitle)
+        //    => Teams.Where(t => t.Title == teamTitle).SelectMany(t => t.GoalsRecord.Goals);
     }
 }
