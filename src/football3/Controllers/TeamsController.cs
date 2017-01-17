@@ -25,18 +25,27 @@ namespace football3.Controllers
             _context = context;
         }
 
+        public IQueryable<Game> GamesTeamParticipated(string teamTitle)
+          => _context.Game.Where(g => g.Teams.Any(t => t.Title == teamTitle));
+        
+        public IQueryable<Team> TeamGames(IQueryable<Game> games, string teamTitle, bool isOfGivenTeam = true)
+            => games.SelectMany(g => g.Teams.Where(t => (t.Title == teamTitle) == isOfGivenTeam));
+            
         public IActionResult Index()
         {
             var teams = _context.Team.GroupBy(t => t.Title).Select(t => t.First()).ToList();
+
             foreach (var team in teams)
             {
-                var gamesParticipated = _context.Game.Where(g => g.Teams.Any(t => t.Title == team.Title));
-                var teamGames = gamesParticipated.SelectMany(g => g.Teams.Where(t => t.Title == team.Title));
-                var opposingTeamGames = gamesParticipated.SelectMany(g => g.Teams.Where(t => t.Title != team.Title));
+                var gamesParticipated = GamesTeamParticipated(team.Title);
+                var teamGames = TeamGames(gamesParticipated, team.Title);
+                var opponentTeamGames = TeamGames(gamesParticipated, team.Title, false);
                 var goalsWon = teamGames.SelectMany(t => t.GoalsRecord.Goals);
+                var goalsLost = opponentTeamGames.SelectMany(t => t.GoalsRecord.Goals);
+
                 team.GoalsWon = goalsWon.Count();
                 team.PenaltyGoals = goalsWon.Where(w => w.GoalType == GoalType.Penalty).Count();
-                team.GoalsLost = opposingTeamGames.SelectMany(t => t.GoalsRecord.Goals).Count();
+                team.GoalsLost = goalsLost.Count();
 
                 var teamWins = gamesParticipated.Where(g =>
                     g.Teams.Where(t => t.Title == team.Title).SelectMany(t => t.GoalsRecord.Goals).Count() >
