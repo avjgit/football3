@@ -39,13 +39,26 @@ namespace footballnet.Models
 
         public int Goals { get; set; }
         public int Passes { get; set; }
+
+        [Display(Name = "Games \nplayed")]
         public int GamesPlayed { get; set; }
+        
+        [Display(Name = "incl.\nin main team")]
         public int GamesPlayedInMainTeam { get; set; }
+
+        [Display(Name = "Minutes played")]
         public int MinutesPlayed { get; set; }
+
+        [Display(Name = "Yellow\ncards")]
         public int YellowCards { get; set; }
+
+        [Display(Name = "Red\ncards")]
         public int RedCards { get; set; }
+
+        [Display(Name = "Total goals missed")]
         public int TotalGoalsMissed { get; set; }
 
+        [Display(Name = "Average goals missed")]
         [DisplayFormat(DataFormatString = "{0:0.0}")]
         public float AvgGoalsMissed { get; set; }
 

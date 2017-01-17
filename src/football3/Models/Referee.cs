@@ -1,4 +1,5 @@
 ﻿using football3.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace footballnet.Models
 {
@@ -8,6 +9,7 @@ namespace footballnet.Models
 
         public int Penalties { get; set; }
 
+        [Display(Name = "Average penalties per game")]
         public float AvgPenaltiesPerGame { get; set; }
     }
 }
