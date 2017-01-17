@@ -70,5 +70,49 @@ namespace football3.Controllers
                     .ThenByDescending(z => z.Passes)
             );
         }
+
+        public IActionResult Goalkeepers()
+        {
+            var goalkeepers = _context
+                   .Player
+                   .Where(p => p.Role == PlayerRole.Goalkeeper)
+                   .GroupBy(p => new { p.Firstname, p.Lastname, p.Team })
+                   .Select(p => p.First())
+                   .ToList();
+
+            foreach (var player in goalkeepers)
+            {
+                var teamsGames = _context.Game
+                    .Where(game => game.Teams.Where(t => t.Title == player.Team)
+                                   .SelectMany(t => t.MainPlayersRecord.PlayersNrs)
+                                   .Any(n => n.Nr == player.Number) ||
+                                   game.Teams.Where(t => t.Title == player.Team)
+                                   .SelectMany(t => t.ChangeRecord.Changes)
+                                   .Any(n => n.PlayerIn == player.Number))
+                    ;
+
+                // or this?
+                //var teamsGames = _context.Game
+                //    .Where(game => 
+                //        game.Teams.Any(t => 
+                //            (t.Title == player.Team) &&
+                //            (
+                //                t.MainPlayersRecord.PlayersNrs.Any(n => n.Nr == player.Number) ||
+                //                t.ChangeRecord.Changes.Any(c => c.PlayerIn == player.Number)
+                //            )
+                //        )
+                //    );
+
+                player.GamesPlayed = teamsGames.Count();
+
+                player.TotalGoalsMissed = teamsGames
+                    .SelectMany(g => g.Teams.Where(t => t.Title != player.Team))
+                    .SelectMany(t => t.GoalsRecord.Goals)
+                    .Count();
+
+                player.AvgGoalsMissed = (float)player.TotalGoalsMissed / player.GamesPlayed;
+            }
+            return View(goalkeepers);
+        }
     }
 }
