@@ -30,7 +30,13 @@ namespace football3.Controllers
         
         public IQueryable<Team> TeamGames(IQueryable<Game> games, string teamTitle, bool isOfGivenTeam = true)
             => games.SelectMany(g => g.Teams.Where(t => (t.Title == teamTitle) == isOfGivenTeam));
-            
+
+        public IEnumerable<Goal> TeamGoals(Game game, string teamTitle)
+            => game.Teams.Where(t => t.Title == teamTitle).SelectMany(t => t.GoalsRecord.Goals);
+
+        public IEnumerable<Goal> OpponentGoals(Game game, string teamTitle)
+            => game.Teams.Where(t => t.Title != teamTitle).SelectMany(t => t.GoalsRecord.Goals);
+
         public IActionResult Index()
         {
             var teams = _context.Team.GroupBy(t => t.Title).Select(t => t.First()).ToList();
@@ -47,8 +53,26 @@ namespace football3.Controllers
                 team.PenaltyGoals = goalsWon.Where(w => w.GoalType == GoalType.Penalty).Count();
                 team.GoalsLost = goalsLost.Count();
 
+            //var teamWins = gamesParticipated.Where(g =>
+            //    TeamGoals(g, team.Title).Count() > OpponentGoals(g, team.Title).Count()
+            //);
+
+            //var teamLosses = gamesParticipated.Where(g =>
+            //    TeamGoals(g, team.Title).Count() < OpponentGoals(g, team.Title).Count()
+            //);
+
+            //ArgumentException: Parameter 'expression.Type' is a 'football3.Controllers.TeamsController', which cannot be assigned to type 'System.Collections.IEnumerable'.
+            //Parameter name: expression.Type
+
+            //NotSupportedException: Cannot parse expression 'value(football3.Controllers.TeamsController)' as it has an unsupported type. Only query sources(that is, expressions that implement IEnumerable) and query operators can be parsed.
+
                 var teamWins = gamesParticipated.Where(g =>
-                    g.Teams.Where(t => t.Title == team.Title).SelectMany(t => t.GoalsRecord.Goals).Count() >
+                   g.Teams.Where(t => t.Title == team.Title).SelectMany(t => t.GoalsRecord.Goals).Count() >
+                   g.Teams.Where(t => t.Title != team.Title).SelectMany(t => t.GoalsRecord.Goals).Count()
+                );
+
+                var teamLosses = gamesParticipated.Where(g =>
+                    g.Teams.Where(t => t.Title == team.Title).SelectMany(t => t.GoalsRecord.Goals).Count() <
                     g.Teams.Where(t => t.Title != team.Title).SelectMany(t => t.GoalsRecord.Goals).Count()
                 );
 
@@ -60,11 +84,6 @@ namespace football3.Controllers
                 team.WinsDuringAddedTime = teamWins.Count(g =>
                     g.Teams.Where(t => t.Title == team.Title).SelectMany(t => t.GoalsRecord.Goals)
                     .Max(x => x.Time).TotalMinutes > mainTime
-                );
-
-                var teamLosses = gamesParticipated.Where(g =>
-                    g.Teams.Where(t => t.Title == team.Title).SelectMany(t => t.GoalsRecord.Goals).Count() <
-                    g.Teams.Where(t => t.Title != team.Title).SelectMany(t => t.GoalsRecord.Goals).Count()
                 );
 
                 team.LossesDuringMainTime = teamLosses.Count(g =>

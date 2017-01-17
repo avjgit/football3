@@ -81,7 +81,7 @@ namespace football3
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Players}/{action=Index}/{id?}");
+                    template: "{controller=Teams}/{action=Index}/{id?}");
             });
         }
     }
