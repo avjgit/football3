@@ -57,9 +57,15 @@ namespace football3.Controllers
                                    .SelectMany(t => t.ChangeRecord.Changes)
                                    .Any(n => n.PlayerIn == player.Number));
 
-                //var teamGames = _context.Game.SelectMany(g => g.Teams.Where(t => t.Title == player.Team));
-                //var teamGamesPenalties = teamGames.Select(t => t.PenaltiesRecord).Where(p => p != null);
+                var teamGames = _context.Team.Where(t => t.Title == player.Team);
+                var teamGamesPenalties = teamGames.Select(t => t.PenaltiesRecord).Where(p => p != null);
+                player.YellowCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 1);
+                player.RedCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 2);
 
+                //foreach (var penaltyRecord in teamGamesPenalties)
+                //{
+                //    penaltyRecord.Penalties = _context.Penalty.Where(p => p.)
+                //}
                 //var penaltiesRecord = _context.Game.SelectMany(g => g.Teams.Where(t => t.Title == player.Team))
                 //    .Select(t => t.PenaltiesRecord)
                 //    .Where(p => p != null);
