@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using football3.Data;
 using footballnet.Models;
 using System.Collections.Generic;
+using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace football3.Controllers
 {
@@ -26,6 +28,7 @@ namespace football3.Controllers
             foreach (var player in players)
             {
                 var teamGames = _context.Team.Where(t => t.Title == player.Team);
+
                 var teamGoals = teamGames.SelectMany(a => a.GoalsRecord.Goals);
 
                 player.Goals = teamGoals.Count(b => b.PlayerNr == player.Number);
@@ -35,18 +38,103 @@ namespace football3.Controllers
                     .SelectMany(t => t.MainPlayersRecord.PlayersNrs)
                     .Count(n => n.Nr == player.Number);
 
-                player.GamesPlayed = teamGames.Count(team =>
+                var gamesPlayed = teamGames.Where(team =>
                     team.MainPlayersRecord.PlayersNrs.Any(n => n.Nr == player.Number) ||
                     team.ChangeRecord.Changes.Any(n => n.PlayerIn == player.Number)
                 );
+
+                player.GamesPlayed = gamesPlayed.Count();
 
                 var teamGamesPenalties = teamGames.Select(t => t.PenaltiesRecord).Where(p => p != null);
                 player.YellowCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 1);
                 player.RedCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 2);
 
-                //public int MinutesPlayed { get; set; }
+                player.MinutesPlayed = GetMinutesPlayed(player);
             }
             return players;
+        }
+
+
+        private int GetMinutesPlayed(Player player)
+        {
+            var gamesWithTeam = _context
+            .Game
+            .Select(g => g.Teams)
+            .Where(g => g.Any(t => 
+                t.Title == player.Team && 
+                (
+                    t.MainPlayersRecord.PlayersNrs.Any(p => p.Nr == player.Number) ||
+                    t.ChangeRecord.Changes.Any(c => c.PlayerIn == player.Number)
+                )
+            ));
+
+            var timePlayedInAllGames = new TimeSpan();
+            foreach (var game in gamesWithTeam)
+            {
+                var teamRecord = game.Where(t => t.Title == player.Team).FirstOrDefault();
+                var team = _context.Team.Where(t => t.Id == teamRecord.Id)
+                    .Include(t => t.ChangeRecord.Changes)
+                    .Include(t => t.MainPlayersRecord.PlayersNrs)
+                    .Include(t => t.GoalsRecord.Goals)
+                    .FirstOrDefault();
+
+                var opponentTeamRecord = game.Where(t => t.Title != player.Team).FirstOrDefault();
+                var opponentTeam = _context.Team.Where(t => t.Id == opponentTeamRecord.Id)
+                    .Include(t => t.GoalsRecord.Goals)
+                    .FirstOrDefault();
+
+                // List of changes will be the main source of calculation - sum up changeIn-changeOut time intervals
+                var changes = new List<Change>();
+                if (team.ChangeRecord != null)
+                    changes = team.ChangeRecord.Changes;
+
+                var mainPlayers = team.MainPlayersRecord?.PlayersNrs;
+
+                // Did player started from beginning? Then include it as first change - changeIn since 00:00
+                if (mainPlayers.Any(p => p.Nr == player.Number))
+                {
+                    changes.Add(new Change
+                    {
+                        PlayerIn = player.Number,
+                        Time = new TimeSpan()
+                    });
+                }
+
+                var changesIn = changes.Where(c => c.PlayerIn == player.Number).OrderBy(c => c.Time).ToList();
+                var changesOut = changes.Where(c => c.PlayerOut == player.Number).OrderBy(c => c.Time).ToList();
+
+                // Did he played till and of the game? Then include it as last change - changeOut since endOfGame time
+                if (changesIn.Count() > changesOut.Count())
+                {
+                    // what if game continued after 60 minutes?
+                    //var lastGoal = game.SelectMany(t => t.GoalsRecord.Goals).Max(g => g.Time);
+                    var lastTeamsGoalTime = team.GoalsRecord != null
+                        ? team.GoalsRecord.Goals.Max(g => g.Time)
+                        : new TimeSpan();
+                    var lastOpponentGoalTime = opponentTeam.GoalsRecord != null
+                        ? opponentTeam.GoalsRecord.Goals.Max(g => g.Time)
+                        : new TimeSpan();
+                    var lastGoal = lastTeamsGoalTime > lastOpponentGoalTime ? lastTeamsGoalTime : lastOpponentGoalTime;
+                    var endOfGame = lastGoal.TotalMinutes > 60 ? lastGoal : new TimeSpan(0, 60, 0);
+
+                    changesOut.Add(new Change
+                    {
+                        PlayerOut = player.Number,
+                        Time = endOfGame
+                    });
+                }
+
+                var timePlayedInGame = new TimeSpan();
+                // Now just calculate changeIn-changeOut pairs
+                for (int i = 0; i < changesIn.Count(); i++)
+                {
+                    var timePlayedBetweenChanges = changesOut[i].Time - changesIn[i].Time;
+                    timePlayedInGame = timePlayedInGame.Add(timePlayedBetweenChanges);
+                }
+
+                timePlayedInAllGames = timePlayedInAllGames.Add(timePlayedInGame);
+            }
+            return (int) timePlayedInAllGames.TotalMinutes;
         }
 
         public IActionResult Index()
