@@ -63,6 +63,13 @@ namespace football3.Controllers
                     .ThenByDescending(p => p.Passes)
                     .Take(10));
         }
+        public IActionResult TopPenalized()
+        {
+            return View(GetPlayers()
+                    .Where(p => p.RedCards > 0 || p.YellowCards > 0)
+                    .OrderByDescending(p => p.RedCards)
+                    .ThenByDescending(p => p.YellowCards));
+        }
 
         public List<Player> GetGoalkeepers()
         {
