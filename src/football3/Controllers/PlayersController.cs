@@ -17,7 +17,7 @@ namespace football3.Controllers
             _context = context;    
         }
 
-        private List<Player> GetPlayers()
+        private List<Player> GetPlayers(bool calculateTimes = false)
         {
             var players = _context
                 .Player
@@ -139,7 +139,7 @@ namespace football3.Controllers
 
         public IActionResult Index()
         {
-            return View(GetPlayers().OrderBy(p => p.Team).ThenBy(p => p.Number));
+            return View(GetPlayers(true).OrderBy(p => p.Team).ThenBy(p => p.Number));
         }
 
         private List<Player> SetPlaces(List<Player> players)
