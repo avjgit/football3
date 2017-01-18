@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace football3.Models
 {
@@ -11,6 +12,9 @@ namespace football3.Models
 
         [JsonProperty("Uzvards")]
         public string Lastname { get; set; }
+
+        [Display(Name = "Place in Top")]
+        public int PlaceInTop { get; set; }
 
         public string FullName => $"{Firstname} {Lastname}";
     }
