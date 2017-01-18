@@ -56,7 +56,7 @@ namespace football3.Controllers
                     .ThenBy(p => p.Number));
         }
 
-        public IActionResult Top()
+        public IActionResult TopPlayers()
         {
             return View(GetPlayers()
                     .OrderByDescending(p => p.Goals)
@@ -64,7 +64,7 @@ namespace football3.Controllers
                     .Take(10));
         }
 
-        public IActionResult Goalkeepers()
+        public List<Player> GetGoalkeepers()
         {
             var goalkeepers = _context
                    .Player
@@ -73,15 +73,15 @@ namespace football3.Controllers
                    .Select(p => p.First())
                    .ToList();
 
-            foreach (var player in goalkeepers)
+            foreach (var goalkeeper in goalkeepers)
             {
                 var teamsGames = _context.Game
-                    .Where(game => game.Teams.Where(t => t.Title == player.Team)
+                    .Where(game => game.Teams.Where(t => t.Title == goalkeeper.Team)
                                    .SelectMany(t => t.MainPlayersRecord.PlayersNrs)
-                                   .Any(n => n.Nr == player.Number) ||
-                                   game.Teams.Where(t => t.Title == player.Team)
+                                   .Any(n => n.Nr == goalkeeper.Number) ||
+                                   game.Teams.Where(t => t.Title == goalkeeper.Team)
                                    .SelectMany(t => t.ChangeRecord.Changes)
-                                   .Any(n => n.PlayerIn == player.Number))
+                                   .Any(n => n.PlayerIn == goalkeeper.Number))
                     ;
 
                 // or this?
@@ -96,16 +96,27 @@ namespace football3.Controllers
                 //        )
                 //    );
 
-                player.GamesPlayed = teamsGames.Count();
+                goalkeeper.GamesPlayed = teamsGames.Count();
 
-                player.TotalGoalsMissed = teamsGames
-                    .SelectMany(g => g.Teams.Where(t => t.Title != player.Team))
+                goalkeeper.TotalGoalsMissed = teamsGames
+                    .SelectMany(g => g.Teams.Where(t => t.Title != goalkeeper.Team))
                     .SelectMany(t => t.GoalsRecord.Goals)
                     .Count();
 
-                player.AvgGoalsMissed = (float)player.TotalGoalsMissed / player.GamesPlayed;
+                goalkeeper.AvgGoalsMissed = (float)goalkeeper.TotalGoalsMissed / goalkeeper.GamesPlayed;
             }
-            return View(goalkeepers);
+            return goalkeepers;
+        }
+        public IActionResult TopGoalkeepers()
+        {
+            return View(GetGoalkeepers()
+                .OrderBy(g => g.AvgGoalsMissed)
+                .Take(5));
+        }
+
+        public IActionResult Goalkeepers()
+        {
+            return View(GetGoalkeepers());
         }
     }
 }
