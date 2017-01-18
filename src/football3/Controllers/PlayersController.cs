@@ -49,7 +49,7 @@ namespace football3.Controllers
                 player.YellowCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 1);
                 player.RedCards = teamGamesPenalties.Count(p => p.Penalties.Count(x => x.PlayerNr == player.Number) == 2);
 
-                player.MinutesPlayed = GetMinutesPlayed(player);
+                player.MinutesPlayed = calculateTimes ? GetMinutesPlayed(player) : 0;
             }
             return players;
         }
