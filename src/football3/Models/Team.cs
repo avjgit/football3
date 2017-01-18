@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace footballnet.Models
@@ -57,9 +55,5 @@ namespace footballnet.Models
         public int Forwards { get; set; }
 
         public int Goalkeepers { get; set; }
-
-        public TimeSpan TotalTimePlayed { get; set; }
-
-        public TimeSpan AverageTimePlayed { get; set; }
     }
 }

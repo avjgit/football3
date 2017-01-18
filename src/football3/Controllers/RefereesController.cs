@@ -37,10 +37,10 @@ namespace football3.Controllers
                     .SelectMany(y => y.PenaltiesRecord.Penalties)
                     .Count();
 
-                referee.AvgPenaltiesPerGame = referee.Penalties / referee.Games;
+                referee.AvgPenaltiesPerGame = (float) referee.Penalties / referee.Games;
             }
 
-            return View(referees);
+            return View(referees.OrderByDescending(r => r.AvgPenaltiesPerGame));
         }
     }
 }
