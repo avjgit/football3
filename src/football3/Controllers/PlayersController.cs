@@ -2,6 +2,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using football3.Data;
 using footballnet.Models;
+using System.Collections.Generic;
 
 namespace football3.Controllers
 {
@@ -14,13 +15,13 @@ namespace football3.Controllers
             _context = context;    
         }
 
-        public IActionResult Index()
+        public List<Player> GetPlayers()
         {
             var players = _context
-                   .Player
-                   .GroupBy(p => new { p.Firstname, p.Lastname, p.Team })
-                   .Select(p => p.First())
-                   .ToList();
+                .Player
+                .GroupBy(p => new { p.Firstname, p.Lastname, p.Team })
+                .Select(p => p.First())
+                .ToList();
 
             foreach (var player in players)
             {
@@ -34,7 +35,7 @@ namespace football3.Controllers
                     .SelectMany(t => t.MainPlayersRecord.PlayersNrs)
                     .Count(n => n.Nr == player.Number);
 
-                player.GamesPlayed = teamGames.Count(team => 
+                player.GamesPlayed = teamGames.Count(team =>
                     team.MainPlayersRecord.PlayersNrs.Any(n => n.Nr == player.Number) ||
                     team.ChangeRecord.Changes.Any(n => n.PlayerIn == player.Number)
                 );
@@ -45,11 +46,22 @@ namespace football3.Controllers
 
                 //public int MinutesPlayed { get; set; }
             }
+            return players;
+        }
 
-            return View(players
+        public IActionResult Index()
+        {
+            return View(GetPlayers()
+                    .OrderBy(p => p.Team)
+                    .ThenBy(p => p.Number));
+        }
+
+        public IActionResult Top()
+        {
+            return View(GetPlayers()
                     .OrderByDescending(p => p.Goals)
-                    .ThenByDescending(z => z.Passes)
-            );
+                    .ThenByDescending(p => p.Passes)
+                    .Take(10));
         }
 
         public IActionResult Goalkeepers()
