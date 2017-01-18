@@ -109,18 +109,28 @@ namespace football3.Controllers
 
                 goalkeeper.GamesPlayed = teamsGames.Count();
 
+                if (goalkeeper.GamesPlayed == 0)
+                {
+                    goalkeeper.AvgGoalsMissed = string.Empty;
+                    continue;
+                }
+
                 goalkeeper.TotalGoalsMissed = teamsGames
                     .SelectMany(g => g.Teams.Where(t => t.Title != goalkeeper.Team))
                     .SelectMany(t => t.GoalsRecord.Goals)
                     .Count();
 
-                goalkeeper.AvgGoalsMissed = (float)goalkeeper.TotalGoalsMissed / goalkeeper.GamesPlayed;
+                var avg = (float) goalkeeper.TotalGoalsMissed / goalkeeper.GamesPlayed;
+                goalkeeper.AvgGoalsMissed = avg.ToString("0.0");
             }
             return goalkeepers;
         }
         public IActionResult TopGoalkeepers()
         {
-            var goalkeepers = GetGoalkeepers().OrderBy(g => g.AvgGoalsMissed).Take(5).ToList();
+            var goalkeepers = GetGoalkeepers()
+                .Where(g => !string.IsNullOrEmpty(g.AvgGoalsMissed))
+                .OrderBy(g => g.AvgGoalsMissed)
+                .Take(5).ToList();
             return View(SetPlaces(goalkeepers));
         }
 

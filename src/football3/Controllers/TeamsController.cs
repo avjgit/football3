@@ -107,9 +107,6 @@ namespace football3.Controllers
                 team.Defendors = players.Count(d => d.Role == PlayerRole.Defender);
                 team.Forwards = players.Count(d => d.Role == PlayerRole.Forward);
                 team.Goalkeepers = players.Count(d => d.Role == PlayerRole.Goalkeeper);
-
-                ////public TimeSpan TotalTimePlayed { get; set; }
-                ////public TimeSpan AverageTimePlayed { get; set; }
             }
 
             foreach (var team in teams)

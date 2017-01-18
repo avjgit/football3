@@ -11,6 +11,6 @@ namespace footballnet.Models
 
         [Display(Name = "Average penalties per game")]
         [DisplayFormat(DataFormatString = "{0:0.0}")]
-        public float AvgPenaltiesPerGame { get; set; }
+        public string AvgPenaltiesPerGame { get; set; }
     }
 }

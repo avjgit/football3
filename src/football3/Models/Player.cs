@@ -60,7 +60,7 @@ namespace footballnet.Models
 
         [Display(Name = "Average goals missed")]
         [DisplayFormat(DataFormatString = "{0:0.0}")]
-        public float AvgGoalsMissed { get; set; }
+        public string AvgGoalsMissed { get; set; }
 
         public string NameAndTeam => $"{FullName}, {Team}";
     }

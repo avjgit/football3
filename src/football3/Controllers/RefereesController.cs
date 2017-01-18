@@ -29,7 +29,10 @@ namespace football3.Controllers
                 referee.Games = gamesAsMainOrLineReferee.Count();
 
                 if (referee.Games == 0)
+                {
+                    referee.AvgPenaltiesPerGame = string.Empty;
                     continue;
+                }
 
                 // assuming penalties issued is counted for all referees
                 referee.Penalties = gamesAsMainOrLineReferee
@@ -37,7 +40,8 @@ namespace football3.Controllers
                     .SelectMany(y => y.PenaltiesRecord.Penalties)
                     .Count();
 
-                referee.AvgPenaltiesPerGame = (float) referee.Penalties / referee.Games;
+                var avg = (float)referee.Penalties / referee.Games;
+                referee.AvgPenaltiesPerGame = avg.ToString("0.0");
             }
 
             referees = referees.OrderByDescending(r => r.AvgPenaltiesPerGame).ToList();
