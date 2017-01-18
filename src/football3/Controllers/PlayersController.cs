@@ -15,7 +15,7 @@ namespace football3.Controllers
             _context = context;    
         }
 
-        public List<Player> GetPlayers()
+        private List<Player> GetPlayers()
         {
             var players = _context
                 .Player
@@ -51,45 +51,49 @@ namespace football3.Controllers
 
         public IActionResult Index()
         {
-            return View(GetPlayers()
-                    .OrderBy(p => p.Team)
-                    .ThenBy(p => p.Number));
+            return View(GetPlayers().OrderBy(p => p.Team).ThenBy(p => p.Number));
+        }
+
+        private List<Player> SetPlaces(List<Player> players)
+        {
+            players.ForEach(r => r.PlaceInTop = players.FindIndex(x => x.Id == r.Id) + 1);
+            return players;
         }
 
         public IActionResult TopPlayers()
         {
-            return View(GetPlayers()
-                    .OrderByDescending(p => p.Goals)
-                    .ThenByDescending(p => p.Passes)
-                    .Take(10));
-        }
-        public IActionResult TopPenalized()
-        {
-            return View(GetPlayers()
-                    .Where(p => p.RedCards > 0 || p.YellowCards > 0)
-                    .OrderByDescending(p => p.RedCards)
-                    .ThenByDescending(p => p.YellowCards));
+            var players = GetPlayers()
+                .OrderByDescending(p => p.Goals)
+                .ThenByDescending(p => p.Passes)
+                .Take(10).ToList();
+
+            return View(SetPlaces(players));
         }
 
-        public List<Player> GetGoalkeepers()
+        public IActionResult TopPenalized()
         {
-            var goalkeepers = _context
-                   .Player
-                   .Where(p => p.Role == PlayerRole.Goalkeeper)
-                   .GroupBy(p => new { p.Firstname, p.Lastname, p.Team })
-                   .Select(p => p.First())
-                   .ToList();
+            var players = GetPlayers()
+                .Where(p => p.RedCards > 0 || p.YellowCards > 0)
+                .OrderByDescending(p => p.RedCards)
+                .ThenByDescending(p => p.YellowCards).ToList();
+
+            return View(SetPlaces(players));
+        }
+
+        private IEnumerable<Player> GetGoalkeepers()
+        {
+            var goalkeepers = GetPlayers().Where(p => p.Role == PlayerRole.Goalkeeper);
 
             foreach (var goalkeeper in goalkeepers)
             {
-                var teamsGames = _context.Game
-                    .Where(game => game.Teams.Where(t => t.Title == goalkeeper.Team)
-                                   .SelectMany(t => t.MainPlayersRecord.PlayersNrs)
-                                   .Any(n => n.Nr == goalkeeper.Number) ||
-                                   game.Teams.Where(t => t.Title == goalkeeper.Team)
-                                   .SelectMany(t => t.ChangeRecord.Changes)
-                                   .Any(n => n.PlayerIn == goalkeeper.Number))
-                    ;
+                var teamsGames = _context.Game.Where(game => 
+                    game.Teams.Where(t => t.Title == goalkeeper.Team)
+                    .SelectMany(t => t.MainPlayersRecord.PlayersNrs)
+                    .Any(n => n.Nr == goalkeeper.Number) 
+                    ||
+                    game.Teams.Where(t => t.Title == goalkeeper.Team)
+                    .SelectMany(t => t.ChangeRecord.Changes)
+                    .Any(n => n.PlayerIn == goalkeeper.Number));
 
                 // or this?
                 //var teamsGames = _context.Game
@@ -116,9 +120,8 @@ namespace football3.Controllers
         }
         public IActionResult TopGoalkeepers()
         {
-            return View(GetGoalkeepers()
-                .OrderBy(g => g.AvgGoalsMissed)
-                .Take(5));
+            var goalkeepers = GetGoalkeepers().OrderBy(g => g.AvgGoalsMissed).Take(5).ToList();
+            return View(SetPlaces(goalkeepers));
         }
 
         public IActionResult Goalkeepers()
